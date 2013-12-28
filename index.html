@@ -1,0 +1,74 @@
+<html>
+
+<head>
+	<title>Soundex</title>
+	<meta content="">
+	<style>
+	body {
+		padding-left: 25%;
+		padding-right: 25%
+	}
+	input, textarea {
+		padding: 5px;
+		width: 100%;
+		font-size: 2em;
+	}
+	textarea {
+		height: 25%;
+	}
+	.exact {
+		border: 2px solid green;
+	}
+	.approx {
+		border: 2px solid yellow;
+	}
+	.error {
+		border: 2px solid red;
+	}
+	.soundex {
+		color: #555;
+	}
+	</style>
+	<script src="js/jquery.js"></script>
+	<script src="js/soundex.js"></script>
+	<script src="js/spellcheck.js"></script>
+</head>
+
+<body>
+	<textarea>മേഘം</textarea>
+	<input id='word' value="മേഗം" />
+	<div class='soundex'></div>
+	<div class='suggestions'></div>
+	<script type="text/javascript">
+	var sp = spellcheck($('textarea').val());
+	$('#word').on('change input', function() {
+		var word = $(this).val();
+		var s = soundex();
+		$('.soundex').text(s.get(word));
+		$('#word').removeClass('exact');
+		$('#word').removeClass('approx');
+		$('#word').removeClass('error');
+		check(word);
+	});
+
+	function check(word) {
+		var sp = spellcheck($('textarea').val());
+		var spellcheckResult = sp.check(word);
+		if (spellcheckResult == 0) {
+			$('#word').addClass('exact');
+			$('.suggestions').text('');
+			return;
+		}
+		if (spellcheckResult == 1 ) {
+			$('#word').addClass('approx');
+		}
+		if (spellcheckResult == -1) {
+			$('#word').addClass('error');
+		}
+		var suggestions = sp.suggestions(word);
+		$('.suggestions').text('Suggestions:' + suggestions);
+	}
+	</script>
+</body>
+
+</html>
